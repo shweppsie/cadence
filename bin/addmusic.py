@@ -8,7 +8,7 @@ from time import strftime, sleep
 from optparse import OptionParser
 
 #find albums in mpd library
-#this assumes a folder structure of "albums/(artist)/(album)/.*(.mp3|.flac|etc)"
+#this assumes a folder structure of "^albums/(artist)/(album)/.*(.mp3|.flac|etc)"
 def getalbums():
 	(output, error) = Popen([mpc, "listall"], stdout=PIPE, stderr=PIPE, env=environment).communicate()
 	if error.strip() != "":
@@ -17,8 +17,10 @@ def getalbums():
 	
 	#find albums and add them to the set
 	keys = {}
-	for i in findall('albums/.*/(.*)/.*\.(mp3|flac)', output):
-		keys[i[0]] = 1
+	for line in output.split('\n'):
+		i = match('^albums/.*/(.*)/.*\.(mp3|flac)', line)
+		if i is not None:
+			keys[i.group(1)] = 1
 	#check we found something
 	if len(keys) < 1:
 		stderr.write("ERROR: No albums found!")
@@ -32,8 +34,9 @@ def gettracks(album):
 		exit(1)
 	#add tracks from the album to the list
 	tracks = []
-	for i in findall('(albums/.*/'+album+'/.*\.(mp3|flac))', output):
-		tracks.append(i[0])
+	for line in output.split('\n'):
+		if match('^(albums/.*/'+album+'/.*\.(mp3|flac))', line):
+			tracks.append(line)
 	return tracks
 
 #################
@@ -49,6 +52,9 @@ print strftime("%Y-%m-%d %H:%M")
 
 #we use mpc for mpd playlist manipulation
 mpc="/usr/bin/mpc"
+
+#we need somewhere to store played files so we don't repeat them all the time
+save="/var/lib/addmusic"
 
 #some environment variables needed for mpc
 environment=dict(MPD_HOST='127.0.0.1')
@@ -120,5 +126,4 @@ if noTracks < 4:
 	(output, error) = Popen([mpc, "play"], stdout=PIPE, stderr=PIPE, env=environment).communicate()
 	if error.strip() != "":
 		stderr.write("ERROR: "+error)
-		stderr.write("ERROR: "+output)
 		exit(1)
