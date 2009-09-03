@@ -3,7 +3,7 @@
 cadence is intended to play constant music from an mpd music collection. There will be 2 components:
 
 ##Daemon##
-A python daemon which monitors mpd an will adds whole albums before playback stops.
+A python daemon which monitors mpd and adds random tracks or whole albums before playback stops.
 
 Current Progress:
 
@@ -13,7 +13,7 @@ Planned Modifications/Features:
 
   * Use python-mpd python library to talk to mpd
   * Make into a daemon
-  * Be clever and work out albums by reoccurance of album tags (for people who suck at organising music. see http://github.com/scottr/albumidentify/tree/master )
+  * Be clever and work out albums by reoccurance of album tags (for people who suck at organising music. see [albumidentify](http://github.com/scottr/albumidentify/tree/master))
   * provide ratings somehow
   * be more clever about shuffle (don't repeat albums and avoid playing the same artist continuously)
   * collect statistics about played tracks and proved them with a command so we can use them with the web interface
