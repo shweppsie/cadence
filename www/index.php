@@ -40,7 +40,7 @@
         <div class="meta">
             <div id="playlist">
                 <div class="right_controls">
-                    <a href="#" onclick="command('clear'); songlist(); return false"><img src="images/playlist_clear.png" alt="Clear |" /></a> 
+                    <a href="#" onclick="command('clear'); songlist(); return false"><img src="images/playlist_clear.png" alt="Clear Playlist" title="Clear Playlist" /></a> 
                 </div>
                 <div class="header"><span class="title1">Current Playlist</span></div>
                 <div class="scroller">
