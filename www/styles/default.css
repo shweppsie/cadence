@@ -1,0 +1,163 @@
+body {
+    background: #060606;
+    margin: 0px;
+    padding: 1em 1em 1em 1em;
+    font-family: "Helvetica", "Arial", sans-serif;
+}
+div#player,div#playlist,div#browser,div#artist {
+    border: 1px double #777;
+    background: #ddd url('./default/header.png') repeat-x top;
+    padding: 5px 10px;
+}
+div#player {
+    clear: both;
+    width: 22em;
+    margin: 0 auto;
+    margin-bottom: 1em;
+}
+div.meta {
+    width: 64em;
+    margin: 0 auto;
+}
+div#playlist {
+    float: left;
+    width: 30em;
+    margin 0 0 0 0;
+    height: 25em;
+}
+div.scroller {
+    overflow: auto;
+    height:92%;
+}
+div.header {
+    margin-bottom: 1em;
+}
+div#dirnav {
+    height: 22em;
+}
+div#browser {
+    margin: 0;
+    height: 25em;
+    float: right;
+    width: 30em;
+    scroll: auto;
+}
+div.playerbox {
+    width: 100%;
+    border: 1px solid #000;
+    background: #666;
+    margin: 0px auto;
+    text-align: center;
+}
+h1#host {
+    color: #ddd;
+    font-size: 18px;
+    margin: 2px 2px 0px;
+    padding: 0px;
+    letter-spacing: 4px;
+}
+#controls {
+    padding 0px 1em;
+}
+div.options {
+    border-top: 1px solid #888;
+    padding: 0px 1em;
+}
+div.control {
+    text-align: center;
+    float: left;
+    margin: 0px 5px;
+}
+div.controls a, div.options a {
+    font-size: small;
+    font-weight: bold;
+    margin: 0px auto;
+    color: #ddd;
+    text-decoration: none;
+    letter-spacing: 2px;
+}
+div.controls a:hover, div.options a:hover {
+    color: #e91;
+}
+h3 {
+    color: #333;
+    margin: 0px;
+    padding: 0px;
+    font-size: 11px;
+    font-family: "Arial","Trebuchet MS",sans-serif;
+}
+div.status {
+    background: #999;
+    padding: 1px 4px;
+}
+div.nowplaying {
+    padding: 0em 1em;
+}
+span.songinfo {
+    font-weight: bold;
+}
+#songlist,#directorylist, #updir {
+    margin: 0;
+    padding-bottom: 0.7em;
+    font-size:small;
+}
+#directorylist, #updir {
+    list-style: none;
+    padding: 0px;
+    margin-top: 0px;
+}
+#updir {
+    margin-top: 1.2em;
+}
+#playlist_list {
+    font-size:small;
+    list-style: none;
+}
+#playlist_list {
+    border-top: 1px solid #666;
+}
+#songlist a,#directorylist a,#updir a {
+    color: #621;
+    text-decoration: none;
+}
+#playlist_list a {
+    color: #462;
+    text-decoration: none;
+}
+#current_song {
+    color: #731;
+    font-weight: bold;
+}
+#songlist a:hover, #updir a:hover,  #directorylisy a:hover, div.right_controls a:hover, #playlist_list a:hover {
+    color: #e91;
+}
+div.right_controls {
+    float: right;
+    margin: 0px;
+    padding: 0px;
+    color: #ddd;
+}
+div.right_controls a {
+    font-size: small;
+    text-decoration: none;
+    color: #ddd;
+}
+img {
+    border-width: 0px;
+}
+#playlist_list {
+    padding-left: 10px;
+}
+span.title1, span.title2 {
+    margin: 0px;
+    padding: 0px;
+    letter-spacing: 2px;
+}
+span.title1 {
+    color: #AAA;
+    font-family: "Verdana", "Arial", san-serif;
+}
+span.title2 {
+    font-weight: bold;
+    color: #E91;
+}

@@ -1,0 +1,270 @@
+/* MPD javascript functions
+ * 
+ * Trevor Fountain
+ * 1 June 2007
+ */
+
+var refreshDelay = 2000;
+
+var dirHistory = new Array('');
+var volume;
+var lastVolume;
+var urlpath;
+var playlistSize;
+var prevSong;
+
+function init() {
+  Ajax.Responders.register({
+    onCreate: function() {
+      $('updating').style.display='';
+    },
+    onComplete: function() {
+      $('updating').style.display='none';
+    }
+  });
+  
+  // Create volume slider
+  volume = new Control.Slider('volume_handle','volume', {axis:'horizontal', minimum: 0, maximum: 100,alignX: 0, alignY: 0, onChange: setVolume});
+
+  playlistSize = 0;
+  prevSong = 0;
+
+  update();
+  directory();
+  playlists();
+  songlist();
+  urlupdate();
+}
+
+function urlupdate() {
+  href = document.location + "";
+  dhistory = href.substr(href.lastIndexOf("#")+1,href.length);
+  dhistory = unescape(dhistory);
+  if(urlpath != dhistory) {
+    hard_directory(dhistory);
+  }
+  setTimeout('urlupdate()',1000);
+}
+
+function update() {
+  refresh();
+  
+  setTimeout('update()',refreshDelay);
+}
+
+function songlist() {
+  new Ajax.Request("rpc/playlist.php",
+    {
+      method:"post",
+      onSuccess: function(xml) {
+        var res = xml.responseText.evalJSON();
+
+        $('songlist').innerHTML = "";
+        var cur = "";
+        if(res.playlist[0].title != undefined) {
+          for(var i = 0;i < res.playlist.length; i++) {
+            res.playlist[i].title = res.playlist[i].title.replace("\\'","'");
+            $('songlist').innerHTML += "<li><a href='#' onclick='command(\"del\","+(i)+"); return false;'>[x]</a><a id='song_"+i+"' href='#' onclick='command(\"play\","+(i)+"); return false'>" + res.playlist[i].title + "</a></li>";
+          }
+        }
+        
+      }
+    });
+}
+
+function playlists() {
+  new Ajax.Request("rpc/playlists.php",
+    {
+      method:"post",
+      onSuccess: function(xml) {
+        var res = xml.responseText.evalJSON();
+        $('playlist_list').innerHTML = "";
+        for(var i=0;i<res.length;i++) {
+          res[i] = res[i].replace("\\'","'");
+          $('playlist_list').innerHTML += "<li class='playlist_entry'><a href='#' onclick='delete_playlist(\""+res[i]+"\"); return false;'><img src='images/delete.png' alt='[del]' title='Delete Playlist' /></a> <a href='#' onclick=\"command('load','"+res[i]+"'); songlist(); return false;\">" + res[i] + "</a></li>\n";
+        }
+      }
+    });
+}
+
+function getArtists(artist) {
+  new Ajax.Request("rpc/artist.php?artist="+artist,
+    {
+      method:"post",
+      onSuccess: function(xml) {
+        $('similiar_artists').innerHTML = xml.responseText;
+      }
+    });
+}
+
+function toggle_p(prop) {
+  new Ajax.Request("rpc/toggle.php?property="+prop,
+    {
+      method:"post",
+      onSuccess: function(xml) {
+        refresh();
+      }
+    });
+}
+
+function refresh() {
+  new Ajax.Request("rpc/status.php",
+    {
+      method:"post",
+      onSuccess: function(xml) {
+        var res = xml.responseText.evalJSON();
+        if($('artist').innerHTML != res.artist) {
+          getArtists(res.artist);
+        }
+        if(res.title)
+          $('nowplaying').innerHTML = "<span class=\"songinfo\">" + res.title + "</span> by <span class=\"songinfo\" id=\"artist\">" + res.artist + "</span>";
+        else if(res.file)
+          $('nowplaying').innerHTML = "<span class=\"songinfo\">" + res.file + "</span>";
+        else
+          $('nowplaying').innerHTML = "&nbsp;";
+        if(res.random)
+          $('random').style.color = "#e91";
+        else
+          $('random').style.color = "#ddd";
+        if(res.repeat)
+          $('repeat').style.color = "#e91";
+        else
+          $('repeat').style.color = "#ddd";
+          
+        if(res.state == "stop") {
+          $('play').style.color="#ddd";
+          $('play').innerHTML = "Play";
+          $('stop').style.color="#e91";
+        } else if(res.state == "paused") {
+          $('play').style.color="#e91";
+          $('play').innerHTML = "Play";
+          $('stop').style.color="#ddd";
+        } else if(res.state == "play") {
+          $('play').style.color="#e91";
+          $('play').innerHTML = "Pause";
+          $('stop').style.color="#ddd";
+        }
+        volume.setValue(res.volume / 100.0);
+        
+        if(res.playlistlength != playlistSize) {
+          songlist();
+          playlistSize = res.playlistlength;
+        }
+
+        $('song_'+prevSong).style.fontWeight="";
+        $('song_'+res.pos).style.fontWeight="bold";
+        prevSong = res.pos;
+      },
+      onFailure: function() {
+      }
+    });
+}
+
+function up_directory() {
+  if(dirHistory.length > 1) {
+    directory2(dirHistory[dirHistory.length - 2],"pop");
+  } else {
+    directory2("");
+  }
+}
+
+function directory(path) {
+  op = undefined;
+  if(path == undefined || path == "")
+    path = "";
+  else {
+    path += "/";
+    op = "push";
+  }
+  
+  directory2(path,op);
+}
+
+function hard_directory(path) {
+  while(dirHistory.length >= 1 && dirHistory[dirHistory.length - 1] != path)
+    dirHistory.pop();
+  directory2(path);
+}
+
+function directory2(path,op) {
+  href = document.location + "";
+  href = href.substr(0,href.lastIndexOf("#"));
+  document.location = href + "#" + path;
+  urlpath = path;
+
+  new Ajax.Request("rpc/directory.php?path="+path,
+    {
+      method:"post",
+      onSuccess: function(xml) {
+        data = xml.responseText.replace(/;amp_r;/g,"&amp;");
+        $('directorylist').innerHTML = data;
+        if(op == "push")
+          dirHistory.push(path);
+        else if(op == "pop")
+          dirHistory.pop();
+      }
+    });
+}
+
+function enqueue(file) {
+  command('enqueue',file);
+/*
+  new Ajax.Request("rpc/enqueue.php?path="+path,
+    {
+      method:"post",
+      onSuccess:function(xml) {
+        songlist();
+      }
+  });
+*/
+}
+
+function addToPlaylist(path) {
+  command('add',path);
+}
+
+function play() {
+  cmd = $('play').innerHTML.toLowerCase();
+  
+  if(cmd == "play") {
+    $('play').innerHTML = "Pause";
+    command('play');
+  } else {
+    $('play').innerHTML = "Play";
+    command('pause=',true);
+  }
+}
+
+function command(cmd,args) {
+  new Ajax.Request("rpc/command.php?command="+cmd+"&args="+args,
+    {
+      method:"post",
+      onSuccess: function(xml) {
+        refresh();
+      }
+    });
+}
+
+function save_playlist() {
+  var filename = prompt("Save playlist as:",'');
+  
+  if(filename != null && filename != '') {
+    command('save',filename);
+    playlists();
+  }
+}
+
+function delete_playlist(name) {
+  if(name != null && name != '') {
+    command('rm',name);
+    playlists();
+  }
+}
+
+function setVolume(v) {
+  v = (v*100).toFixed();
+  if(v != lastVolume) {
+    command("volume=",v);
+    lastVolume = v;
+  }
+}

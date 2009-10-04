@@ -1,0 +1,25 @@
+** About **
+
+orangePlayer is an AJAX-based web client for MPD written in PHP.
+cadence is a tool for adding music to mplayer which contains  a
+fork of orangePlayer
+
+** Legal **
+
+orangePlayer is licensed under the GNU GPL v3.0
+cadence is licensed under the GNU GPL v3.0
+
+** Requires **
+
+Web server running PHP -- Preferably Apache2 w/ PHP5.
+MPD (www.musicpd.org)
+
+** Install **
+  To set up cadence, place the contents of the 'www' directory (containing
+the PHP scripts, etc.) into a directory that can be accessed by Apache. 
+If MPD is not running locally on port 6600, you will have to edit 
+'config.php' to reflect the address/port on which MPD can be found. 
+
+NOTE: you may need to add the line: 
+bind_to_address   "x.x.x.x"
+to your /etc/mpd.conf file, where "x.x.x.x" is your MPD server's IP address.
