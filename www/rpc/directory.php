@@ -23,8 +23,10 @@ foreach($list as $line) {
     echo "<img style=\"padding-right: 4px;\" alt=\"[add]\" title=\"Add to Playlist\" src=\"images/file_add.png\" /></a>";
     echo "<a onclick=\"addToPlaylist('$path/{$keyval[1]}'); return false;\" href=\"#\">{$pretty}</a></li>";
   } elseif ($keyval[0] == "directory") {
-    echo "<li><a onclick=\"addToPlaylist('$path/{$keyval[1]}'); return false;\" href=\"#\">";
+    echo "<li><a onclick=\"addToPlaylist('$path/{$keyval[1]}'); command('play'); songlist(); return false;\" href=\"#\">";
     echo "<img style=\"padding-right: 4px;\" alt=\"[add]\" title=\"Add to Playlist\" src=\"images/folder_add.png\" /></a>";
+    echo "<a onclick=\"command('clear'); addToPlaylist('$path/{$keyval[1]}'); command('play'); songlist(); return false;\" href=\"#\">";
+    echo "<img style=\"padding-right: 4px;\" alt=\"[add]\" title=\"Replace Current Playlist\" src=\"images/replace.png\" /></a>";
     echo "<a onclick=\"down_directory('{$keyval[1]}'); return false;\" href=\"#\">{$pretty}</a></li>";
   }
 }
