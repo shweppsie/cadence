@@ -47,18 +47,19 @@ function refresh() {
         method:"post",
         onSuccess: function(xml) {
             var res = xml.responseText.evalJSON();
-
-            document.title = cleanup(res.artist) + " - " + cleanup(res.title);
-            
+           
             //updates the now playing stuff
             if(res.title && res.artist && res.album){
                 $('nowplaying').innerHTML = "<span class=\"songinfo\">Title: </span>" + cleanup(res.title) + "<br>";
                 $('nowplaying').innerHTML += "<span class=\"songinfo\">Artist: </span>" + cleanup(res.artist) + "<br>";
                 $('nowplaying').innerHTML += "<span class=\"songinfo\">Album: </span>" + cleanup(res.album) + "<br>";
+                document.title = cleanup(res.artist) + " - " + cleanup(res.title);
             } else if(res.file) {
                 $('nowplaying').innerHTML = "<span class=\"songinfo\">" + cleanup(res.file) + "</span>";
+                document.title = cleanup(res.file);
             } else {
                 $('nowplaying').innerHTML = "&nbsp;";
+                document.title = "Not Playing";
             }
             
             if(res.state == "paused") {
