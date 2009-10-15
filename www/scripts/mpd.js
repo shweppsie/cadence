@@ -98,22 +98,30 @@ function songlist() {
             onSuccess: function(xml) {
                 var res = xml.responseText.evalJSON();
                 $('songlist').innerHTML = "";
-                var cur = "";
-                if(res.playlist[0].title != undefined) {
-                    var artist = "";
-                    var album = "";
-                    for(var i = 0;i < res.playlist.length; i++) {
-                        res.playlist[i].title = res.playlist[i].title.replace("\\'","'");
-                        /*if(res.playlist[i].artist != artist && res.playlist[i].album == album)
-                                $('songlist').innerHTML += "<span style=\"font-weight: bold;\"></span>this song by <span style=\"font-weight: bold;\">" + cleanup(res.playlist[i].artist) + "</span>";
-                        else*/ if(res.playlist[i].artist != artist && res.playlist[i].album != album)
-                                $('songlist').innerHTML += "<span style=\"font-weight: bold;\">" + cleanup(res.playlist[i].album) + "</span> by <span style=\"font-weight: bold;\">" + cleanup(res.playlist[i].artist) + "</span>";
-                        $('songlist').innerHTML += "<li><a href='#' onclick='command(\"del\","+(i)+"); return false;'>[x]</a><a id='song_"+i+"' href='#' onclick='command(\"play\","+(i)+"); return false'>" + cleanup(res.playlist[i].title) + "</a></li>";
+                var album = "";
+                var artist = "";
+                var oldalbum = "";
+                for(var i = 0;i < res.playlist.length; i++) {
+                    if(res.playlist[i].artist == undefined){
+                        artist = 'unknown artist';
+                    } else {
                         artist = res.playlist[i].artist;
+                    }
+                    if(res.playlist[i].album == undefined){
+                        album = 'unknown album';
+                    } else {
                         album = res.playlist[i].album;
                     }
+                    if(oldalbum != album){
+                        $('songlist').innerHTML += "<span style=\"font-weight: bold;\">" + cleanup(album) + "</span> by <span style=\"font-weight: bold;\">" + cleanup(artist) + "</span>";
+                        oldalbum = album;
+                    }
+                    if(res.playlist[i].title == undefined){
+                        $('songlist').innerHTML += "<li><a href='#' onclick='command(\"del\","+(i)+"); return false;'>[x]</a><a id='song_"+i+"' href='#' onclick='command(\"play\","+(i)+"); return false'>Unknown Track</a></li>";
+                    } else {
+                        $('songlist').innerHTML += "<li><a href='#' onclick='command(\"del\","+(i)+"); return false;'>[x]</a><a id='song_"+i+"' href='#' onclick='command(\"play\","+(i)+"); return false'>" + cleanup(res.playlist[i].title) + "</a></li>";
+                    }
                 }
-                
             }
         });
 }
@@ -177,6 +185,13 @@ function change_directory(path) {
 
 function addToPlaylist(path) {
     command('add',path);
+    command('play');
+}
+
+function replaceCurrentPlaylist(path) {
+    command('clear');
+    command('add',path);
+    command('play');
 }
 
 function play() {
