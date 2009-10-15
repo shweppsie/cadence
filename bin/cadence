@@ -5,13 +5,42 @@ from random import randint
 from time import strftime
 from optparse import OptionParser
 from mpd import MPDClient
+from time import sleep
 
 client = MPDClient()
-client.connect("localhost", 6600)
+albums = [] 
+
+def main():
+    global albums
+    client.connect("localhost", 6600)
+
+    usage = "Usage: %prog"
+    parser = OptionParser(usage=usage)
+    (options, args) = parser.parse_args()
+
+    albums = getAlbums()
+
+    while 1:
+        #if mpc is stopped clear the playlist
+        if client.status()['state'] == 'stop':
+            client.clear()
+        else:
+            removePlayedTracks()
+        #we want at least 1 track in the playlist
+        if len(client.playlist()) <= 1:
+            addAlbum()
+
+        #if mpc is stopped start it playing
+        if client.status()['state'] == 'stop':
+            client.play()
+
+        sleep(1);
+
+        print strftime("%Y-%m-%d %H:%M:%S")
 
 #find albums in mpd library
 #this assumes a folder structure of "^albums/(artist)/(album)/.*(.mp3|.flac|etc)"
-def getalbums():
+def getAlbums():
         "returns all songs from the mpd database"
         client.iterate = True
         files = client.listallinfo()
@@ -38,49 +67,23 @@ def getalbums():
 
         return albums.items()
 
-#################
-# Program Start #
-#################
-
-usage = "Usage: %prog"
-parser = OptionParser(usage=usage)
-(options, args) = parser.parse_args()
-
-#print the time for log purposes
-print strftime("%Y-%m-%d %H:%M")
-
-#we need somewhere to store played files so we don't repeat them all the time
-save="/var/lib/addmusic"
-
-########################
-# Remove played tracks #
-########################
-
-#if mpc is stopped clear the playlist
-if client.status()['state'] == 'stop':
-    client.clear()
-else:
+def removePlayedTracks():
     #remove played tracks
     for i in range(0, int(client.currentsong()['pos'])):
         client.delete(0)
 
-##################################
-# Add a new album if it's needed #
-##################################
-
-#we want at least 1 track in the playlist
-if len(client.playlist()) <= 1:
+def addAlbum():
         #add an album at random
         #this relies on a folder structure of "(artist)/(album)/.*(.mp3|.flac|etc)"
         print "1 track remains. Adding a random album..."
         
         #fetch a random album. Check there is actually tracks in it
-        albums = getalbums()
         album = albums[randint(0, len(albums)-1)]
+        
         print "adding: %s" % album[1]
         client.add(album[1]);
 
-#if mpc is stopped start it playing
-if client.status()['state'] == 'stop':
-    client.play()
+if __name__ == "__main__":
+    main()
+    sys.exit(0)
 
