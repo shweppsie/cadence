@@ -44,8 +44,6 @@ class MPD {
                 $line = "";
                 while(($line = $this->readline()) != "OK\n") {
                     if(strpos($line,"ACK") === 0) {
-                        echo "<P>error: $line</P>";
-                        echo "<p>".strpos($line,"ACK")."</p>";
                         $this->error = $line;
                         return $this->error;
                     }
