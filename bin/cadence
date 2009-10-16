@@ -19,8 +19,20 @@ def main():
     (options, args) = parser.parse_args()
 
     albums = getAlbums()
+    updating = False
 
     while 1:
+        #if mpd is updating then update our db as soon is it stops
+        if 'updating_db' in client.status():
+            if updating == False:
+                print "mpd is updating! Updating db soon"
+                updating = True
+        else:
+            if updating == True:
+                print "Updating db"
+                albums = getAlbums()
+                updating = False
+
         #if mpc is stopped clear the playlist
         if client.status()['state'] == 'stop':
             client.clear()
