@@ -11,7 +11,6 @@ import socket
 client = MPDClient()
 
 def main():
-
     usage = "Usage: %prog"
     parser = OptionParser(usage=usage)
     (options, args) = parser.parse_args()
@@ -34,7 +33,7 @@ def connect(client):
     try:
         client.connect("localhost", 6600)
     except:
-        print "Connecting Failed!"
+        report("Connecting Failed!")
         sleep(1)
 
 def cadence():
@@ -45,11 +44,11 @@ def cadence():
         #if mpd is updating then update our db as soon is it stops
         if 'updating_db' in client.status():
             if updating == False:
-                print "mpd is updating! Updating db soon"
+                report("mpd is updating! Updating db soon")
                 updating = True
         else:
             if updating == True:
-                print "Updating db"
+                report("Updating db")
                 albums = getAlbums()
                 updating = False
 
@@ -68,38 +67,36 @@ def cadence():
 
         sleep(1);
 
-        print strftime("%Y-%m-%d %H:%M:%S")
-
 #find albums in mpd library
 #this assumes a folder structure of "^albums/(artist)/(album)/.*(.mp3|.flac|etc)"
 def getAlbums():
-        "returns all songs from the mpd database"
-        client.iterate = True
-        files = client.listallinfo()
-        client.iterate = False
+    "returns all songs from the mpd database"
+    client.iterate = True
+    files = client.listallinfo()
+    client.iterate = False
 
-        #find a and add them to the set
-        a = {}
-        directory = ""
-        for file in files:
-            if 'directory' in file:
-                directory = file['directory']
-            if 'file' in file:
-                i = match('^albums/.*/(.*)/.*\.(mp3|flac)', file['file'])
-                if i is not None:
-                    if 'album' in file:
-                        album = file['album']
-                        if isinstance(album, list):
-                            album=album[0]
-                        a[album] = directory
-        #check we found something
-        if len(a) < 1:
-            print "ERROR: No albums found!"
-            exit(1)
-        else:
-            print "Found %d albums" % len(a)
+    #find a and add them to the set
+    a = {}
+    directory = ""
+    for file in files:
+        if 'directory' in file:
+            directory = file['directory']
+        if 'file' in file:
+            i = match('^albums/.*/(.*)/.*\.(mp3|flac)', file['file'])
+            if i is not None:
+                if 'album' in file:
+                    album = file['album']
+                    if isinstance(album, list):
+                        album=album[0]
+                    a[album] = directory
+    #check we found something
+    if len(a) < 1:
+        report("ERROR: No Albums Found!")
+        exit(1)
+    else:
+        report("Found "+str(len(a))+" albums")
 
-        return a.items()
+    return a.items()
 
 def removePlayedTracks():
     #remove played tracks
@@ -107,15 +104,18 @@ def removePlayedTracks():
         client.delete(0)
 
 def addAlbum(albums):
-        #add an album at random
-        #this relies on a folder structure of "(artist)/(album)/.*(.mp3|.flac|etc)"
-        print "1 track remains. Adding a random album..."
-        
-        #fetch a random album. Check there is actually tracks in it
-        album = albums[randint(0, len(albums)-1)]
-        
-        print "adding: %s" % album[1]
-        client.add(album[1]);
+    #add an album at random
+    #this relies on a folder structure of "(artist)/(album)/.*(.mp3|.flac|etc)"
+    report("1 track remains. Adding a random album...")
+    
+    #fetch a random album. Check there is actually tracks in it
+    album = albums[randint(0, len(albums)-1)]
+    
+    report("adding: "+album[1])
+    client.add(album[1]);
+
+def report(text):
+    print "%s: %s" % (strftime("%Y-%m-%d %H:%M:%S"), text)
 
 if __name__ == "__main__":
     main()
