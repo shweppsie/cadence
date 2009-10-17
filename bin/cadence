@@ -9,10 +9,8 @@ from time import sleep
 import socket
 
 client = MPDClient()
-albums = [] 
 
 def main():
-    global albums
 
     usage = "Usage: %prog"
     parser = OptionParser(usage=usage)
@@ -62,7 +60,7 @@ def cadence():
             removePlayedTracks()
         #we want at least 1 track in the playlist
         if len(client.playlist()) <= 1:
-            addAlbum()
+            addAlbum(albums)
 
         #if mpc is stopped start it playing
         if client.status()['state'] == 'stop':
@@ -80,8 +78,8 @@ def getAlbums():
         files = client.listallinfo()
         client.iterate = False
 
-        #find albums and add them to the set
-        albums = {}
+        #find a and add them to the set
+        a = {}
         directory = ""
         for file in files:
             if 'directory' in file:
@@ -93,20 +91,22 @@ def getAlbums():
                         album = file['album']
                         if isinstance(album, list):
                             album=album[0]
-                        albums[album] = directory
+                        a[album] = directory
         #check we found something
-        if len(albums) < 1:
-                print "ERROR: No albums found!"
-                exit(1)
+        if len(a) < 1:
+            print "ERROR: No albums found!"
+            exit(1)
+        else:
+            print "Found %d albums" % len(a)
 
-        return albums.items()
+        return a.items()
 
 def removePlayedTracks():
     #remove played tracks
     for i in range(0, int(client.currentsong()['pos'])):
         client.delete(0)
 
-def addAlbum():
+def addAlbum(albums):
         #add an album at random
         #this relies on a folder structure of "(artist)/(album)/.*(.mp3|.flac|etc)"
         print "1 track remains. Adding a random album..."
