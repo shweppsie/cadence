@@ -4,20 +4,42 @@ from re import match
 from random import randint
 from time import strftime
 from optparse import OptionParser
-from mpd import MPDClient
+from mpd import MPDClient, ConnectionError
 from time import sleep
+import socket
 
 client = MPDClient()
 albums = [] 
 
 def main():
     global albums
-    client.connect("localhost", 6600)
 
     usage = "Usage: %prog"
     parser = OptionParser(usage=usage)
     (options, args) = parser.parse_args()
 
+    while 1:
+        try:
+            cadence()
+        except socket.error:
+            connect(client)
+        except ConnectionError:
+            connect(client)
+
+def connect(client):
+    #make sure client doesn't think we're connected
+    try:
+        client.disconnect()
+    except:
+        ""
+    #and try to connect
+    try:
+        client.connect("localhost", 6600)
+    except:
+        print "Connecting Failed!"
+        sleep(1)
+
+def cadence():
     albums = getAlbums()
     updating = False
 
