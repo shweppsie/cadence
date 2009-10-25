@@ -39,6 +39,13 @@ def connect(client):
 def cadence():
     albums = getAlbums()
     updating = False
+    # playmode
+    #
+    # 0 - continuous (play albums in alphabetical order)
+    # 1 - random (play albums at complete random)
+    # 2 - shuffle (play albums at random but don't repeat an album until all other albums have been played)
+    play_mode = 2
+    next = 0
 
     while 1:
         #if mpd is updating then update our db as soon is it stops
@@ -56,10 +63,29 @@ def cadence():
         if client.status()['state'] == 'stop':
             client.clear()
         else:
-            removePlayedTracks()
+            #remove played tracks
+            for i in range(0, int(client.currentsong()['pos'])):
+                client.delete(0)
+
         #we want at least 1 track in the playlist
         if len(client.playlist()) <= 1:
-            addAlbum(albums)
+            #add an album
+            report("1 track remains. Adding a random album...")
+
+            if play_mode == 1:
+                album = albums[randint(0, len(albums)-1)]
+            elif play_mode == 2:
+                if len(albums) == 0:
+                    getAlbums()
+                album = albums.pop(randint(0, len(albums)-1))
+            else:
+                if next == len(albums):
+                    next = 0;
+                album = albums[next]
+                next += 1
+    
+            report("adding: "+album[1])
+            client.add(album[1]);
 
         #if mpc is stopped start it playing
         if client.status()['state'] == 'stop':
@@ -97,22 +123,6 @@ def getAlbums():
         report("Found "+str(len(a))+" albums")
 
     return a.items()
-
-def removePlayedTracks():
-    #remove played tracks
-    for i in range(0, int(client.currentsong()['pos'])):
-        client.delete(0)
-
-def addAlbum(albums):
-    #add an album at random
-    #this relies on a folder structure of "(artist)/(album)/.*(.mp3|.flac|etc)"
-    report("1 track remains. Adding a random album...")
-    
-    #fetch a random album. Check there is actually tracks in it
-    album = albums[randint(0, len(albums)-1)]
-    
-    report("adding: "+album[1])
-    client.add(album[1]);
 
 def report(text):
     print "%s: %s" % (strftime("%Y-%m-%d %H:%M:%S"), text)
