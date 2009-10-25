@@ -70,8 +70,6 @@ def cadence():
         #we want at least 1 track in the playlist
         if len(client.playlist()) <= 1:
             #add an album
-            report("1 track remains. Adding a random album...")
-
             if play_mode == 1:
                 album = albums[randint(0, len(albums)-1)]
             elif play_mode == 2:
