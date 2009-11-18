@@ -61,10 +61,10 @@ function refresh() {
                 $('nowplaying').innerHTML = "&nbsp;";
                 document.title = "Not Playing";
             }
-            
-            if(res.state == "paused") {
+
+            if(res.state == "pause") {
                 $('pause').innerHTML = "Play";
-            } else if(res.state == "play") {
+            } else {
                 $('pause').innerHTML = "Pause";
             }
 
