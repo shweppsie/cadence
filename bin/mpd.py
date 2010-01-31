@@ -46,13 +46,13 @@ class MPD:
         return self.delimit(self.request('playlist'))
 
     def play(self):
-        request('play')
+        self.request('play')
 
     def clear(self):
-        request('clear')
+        self.request('clear')
 
     def delete(self, track):
-        request('delete %s')
+        self.request('delete %s')
 
 if __name__=="__main__":
     print "testing..."
