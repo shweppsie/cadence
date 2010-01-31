@@ -1,131 +1,17 @@
 #!/usr/bin/env python
 
-from re import match
-from random import randint
-from time import strftime
+from daemonize import daemonize
 from optparse import OptionParser
-from mpd import MPDClient, ConnectionError
-from time import sleep
-import socket
-
-client = MPDClient()
-
-def main():
-    usage = "Usage: %prog"
-    parser = OptionParser(usage=usage)
-    (options, args) = parser.parse_args()
-
-    while 1:
-        try:
-            cadence()
-        except socket.error:
-            connect(client)
-        except ConnectionError:
-            connect(client)
-
-def connect(client):
-    #make sure client doesn't think we're connected
-    try:
-        client.disconnect()
-    except:
-        ""
-    #and try to connect
-    try:
-        client.connect("localhost", 6600)
-    except:
-        report("Connecting Failed!")
-        sleep(1)
-
-def cadence():
-    albums = getAlbums()
-    updating = False
-    # playmode
-    #
-    # 0 - continuous (play albums in alphabetical order)
-    # 1 - random (play albums at complete random)
-    # 2 - shuffle (play albums at random but don't repeat an album until all other albums have been played)
-    play_mode = 2
-    next = 0
-
-    while 1:
-        #if mpd is updating then update our db as soon is it stops
-        if 'updating_db' in client.status():
-            if updating == False:
-                report("mpd is updating! Updating db soon")
-                updating = True
-        else:
-            if updating == True:
-                report("Updating db")
-                albums = getAlbums()
-                updating = False
-
-        #if mpc is stopped clear the playlist
-        if client.status()['state'] == 'stop':
-            client.clear()
-        else:
-            #remove played tracks
-            for i in range(0, int(client.currentsong()['pos'])):
-                client.delete(0)
-
-        #we want at least 1 track in the playlist
-        if len(client.playlist()) <= 1:
-            #add an album
-            if play_mode == 1:
-                album = albums[randint(0, len(albums)-1)]
-            elif play_mode == 2:
-                if len(albums) == 0:
-                    getAlbums()
-                album = albums.pop(randint(0, len(albums)-1))
-            else:
-                if next == len(albums):
-                    next = 0;
-                album = albums[next]
-                next += 1
-    
-            report("adding: "+album[1])
-            client.add(album[1]);
-
-        #if mpc is stopped start it playing
-        if client.status()['state'] == 'stop':
-            client.play()
-
-        sleep(1);
-
-#find albums in mpd library
-#this assumes a folder structure of "^albums/(artist)/(album)/.*(.mp3|.flac|etc)"
-def getAlbums():
-    "returns all songs from the mpd database"
-    client.iterate = True
-    files = client.listallinfo()
-    client.iterate = False
-
-    #find a and add them to the set
-    a = {}
-    directory = ""
-    for file in files:
-        if 'directory' in file:
-            directory = file['directory']
-        if 'file' in file:
-            i = match('^albums/.*/(.*)/.*\.(mp3|flac)', file['file'])
-            if i is not None:
-                if 'album' in file:
-                    album = file['album']
-                    if isinstance(album, list):
-                        album=album[0]
-                    a[album] = directory
-    #check we found something
-    if len(a) < 1:
-        report("ERROR: No Albums Found!")
-        exit(1)
-    else:
-        report("Found "+str(len(a))+" albums")
-
-    return a.items()
-
-def report(text):
-    print "%s: %s" % (strftime("%Y-%m-%d %H:%M:%S"), text)
+from main import cadence
 
 if __name__ == "__main__":
-    main()
-    sys.exit(0)
+    usage = "Usage: %prog"
+    parser = OptionParser(usage=usage)
+    parser.add_option('-d','--daemonize',dest="daemon",action="store_true",help="Run cadence as a daemon")
+    (options, args) = parser.parse_args()
+
+    if options.daemon:
+        daemonize(cadence)
+    else:
+        cadence()
 
