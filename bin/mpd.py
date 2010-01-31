@@ -52,7 +52,7 @@ class MPD:
         self.request('clear')
 
     def delete(self, track):
-        self.request('delete %s')
+        self.request('delete %s' % track)
 
 if __name__=="__main__":
     print "testing..."
