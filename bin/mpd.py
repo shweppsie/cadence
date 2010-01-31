@@ -53,7 +53,7 @@ class MPD:
         self.request('clear')
 
     def add(self, track):
-        self.request('add %s' % track)
+        self.request('add \"%s\"' % track)
 
     def delete(self, track):
         self.request('delete %s' % track)

@@ -12,6 +12,9 @@ import copy
 
 client = mpd.MPD('zoidberg', 6600)
 
+#number of played tracks to keep
+KEEPTRACKS=3
+
 def cadence():
     report("launching cadence")
 
@@ -27,7 +30,7 @@ def main():
     # 2 - shuffle (play albums at random but don't repeat an album until all other albums have been played)
     play_mode = 2
     albums = getAlbums()
-    shuffle = copy.deepcopy(albums)
+    shuffle = albums.keys()
     updating = False
     next = 0
 
@@ -48,11 +51,11 @@ def main():
         else:
             #remove old tracks, keep the last 3
             if client.currentsong()['pos'] > 3:
-                for i in range(0, int(client.currentsong()['pos']) - 3):
+                for i in range(0, int(client.currentsong()['pos']) - KEEPTRACKS):
                     client.delete(0)
 
         #we want at least 1 track in the playlist
-        if len(client.playlist()) <= 1:
+        if len(client.playlist()) <= 1 + KEEPTRACKS:
             album = ""
             tracks = []
             #add an album
@@ -62,9 +65,10 @@ def main():
             elif play_mode == 2:
                 #shuffle
                 if len(shuffle) == 0:
-                    shuffle = copy.deepcopy(albums)
-                album = shuffle.keys()[randint(0, len(shuffle.keys())-1)]
-                tracks = shuffle.pop(album)
+                    shuffle = albums.keys()
+                album = shuffle.pop(randint(0, len(shuffle)-1))
+                tracks = albums[album]
+                print tracks
             else:
                 #continuous
                 if next == len(albums):
@@ -92,12 +96,12 @@ def getAlbums():
     report("updating local db")
 
     data = ""
-    pattern = re.compile('(albums/.*/(.*)/.*\.(mp3|flac))')
+    pattern = re.compile('albums/.*/(.*)/.*\.(mp3|flac)')
 
     data = client.listall()
-    
+
     for i in data:
-        if i[0] is 'file':
+        if i[0] == 'file':
             f = pattern.match(i[1])
             if f:
                 if f.group(1) not in albums:
