@@ -25,31 +25,35 @@ class MPD:
         """return the data without the OK"""
         return data.split('\n')[:-2]
 
-    def delimit(self, data):
-        result = {}
-
+    def delimit(self, data, result):
         for i in data:
             j = i.split(':')
-            result[j[0].lower()] = j[1].strip()
+            if type(result) is list:
+                result.append((j[0].lower(), j[1].strip()))
+            elif type(result) is dict:
+                result[j[0].lower()] = j[1].strip()
         return result
 
     def listall(self):
-        return self.request('listall')
+        return self.delimit(self.request('listall'), [])
 
     def status(self):
-        return self.delimit(self.request('status'))
+        return self.delimit(self.request('status'), {})
 
     def currentsong(self):
-        return self.delimit(self.request('currentsong'))
+        return self.delimit(self.request('currentsong'), {})
 
     def playlist(self):
-        return self.delimit(self.request('playlist'))
+        return self.delimit(self.request('playlist'), {})
 
     def play(self):
         self.request('play')
 
     def clear(self):
         self.request('clear')
+
+    def add(self, track):
+        self.request('add %s' % track)
 
     def delete(self, track):
         self.request('delete %s' % track)

@@ -8,6 +8,7 @@ from sys import stdout
 import signal
 import re
 import mpd
+import copy
 
 client = mpd.MPD('zoidberg', 6600)
 
@@ -26,6 +27,7 @@ def main():
     # 2 - shuffle (play albums at random but don't repeat an album until all other albums have been played)
     play_mode = 2
     albums = getAlbums()
+    shuffle = copy.deepcopy(albums)
     updating = False
     next = 0
 
@@ -59,11 +61,10 @@ def main():
                 album = albums[randint(0, len(albums)-1)]
             elif play_mode == 2:
                 #shuffle
-                if len(albums) == 0:
-                    albums = getAlbums()
-                t = albums.keys()
-                album = t[randint(0, len(t)-1)]
-                tracks = albums.pop(album)
+                if len(shuffle) == 0:
+                    shuffle = copy.deepcopy(albums)
+                album = shuffle.keys()[randint(0, len(shuffle.keys())-1)]
+                tracks = shuffle.pop(album)
             else:
                 #continuous
                 if next == len(albums):
@@ -73,6 +74,7 @@ def main():
     
             report("adding: "+album)
             for i in tracks:
+                print i
                 client.add(i);
 
         #if mpc is stopped start it playing
@@ -90,16 +92,17 @@ def getAlbums():
     report("updating local db")
 
     data = ""
-    pattern = re.compile('file: (albums/.*/(.*)/.*\.(mp3|flac))\n')
+    pattern = re.compile('(albums/.*/(.*)/.*\.(mp3|flac))')
 
     data = client.listall()
     
-    
     for i in data:
-        if pattern.match(i):
-            if i[1] not in albums:
-                albums[i[1]] = []
-            albums[i[1]].append(i[0])
+        if i[0] is 'file':
+            f = pattern.match(i[1])
+            if f:
+                if f.group(1) not in albums:
+                    albums[f.group(1)] = []
+                albums[f.group(1)].append(f.group(0))
 
     report("completed updating db")
 
