@@ -14,6 +14,7 @@ div#player {
     width: 22em;
     margin: 0 auto;
     margin-bottom: 1em;
+    height: 160px;
 }
 div.meta {
     width: 64em;
@@ -37,7 +38,7 @@ div#dirnav {
 }
 div#browser {
     margin: 0;
-    height: 25em;
+    height: auto;
     float: right;
     width: 30em;
     scroll: auto;
@@ -48,6 +49,7 @@ div.playerbox {
     background: #666;
     margin: 0px auto;
     text-align: center;
+    height: 136px;
 }
 h1#host {
     color: #ddd;
@@ -128,7 +130,7 @@ span.songinfo {
     color: #731;
     font-weight: bold;
 }
-#songlist a:hover, #updir a:hover,  #directorylisy a:hover, div.right_controls a:hover, #playlist_list a:hover {
+#songlist a:hover, #updir a:hover,  #directorylist a:hover, div.right_controls a:hover, #playlist_list a:hover {
     color: #e91;
 }
 div.right_controls {
