@@ -68,7 +68,6 @@ def main():
                     shuffle = albums.keys()
                 album = shuffle.pop(randint(0, len(shuffle)-1))
                 tracks = albums[album]
-                print tracks
             else:
                 #continuous
                 if next == len(albums):
