@@ -78,7 +78,6 @@ def main():
     
             report("adding: "+album)
             for i in tracks:
-                print i
                 client.add(i);
 
         #if mpc is stopped start it playing
