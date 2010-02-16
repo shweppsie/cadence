@@ -63,6 +63,8 @@ class MPD {
     }
     
     function nested_hashify($array) {
+        if($array == "OK\n")
+            return Array();
         if(!is_array($array))
             $array = Array($array);
         $hash = Array();
