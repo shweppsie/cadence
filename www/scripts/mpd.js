@@ -13,6 +13,8 @@ var urlpath;
 var playlistSize;
 var prevSong;
 
+var path
+
 function init() {
     Ajax.Responders.register({
         onCreate: function() {
@@ -141,7 +143,8 @@ function toggle_p(prop) {
 }
 
 function update_dir(){
-    var path = "";
+    path = "";
+    
     if(curDirectory.length > 0){
         for( var i = 0; i < curDirectory.length; i++){
             path += curDirectory[i];
@@ -149,21 +152,48 @@ function update_dir(){
         }
         path = path.substring(0, path.length - 1);
     }
-
-    if(path != ""){
-        $('updir').innerHTML = "<li style=\"margin-bottom: 0.4em;\"><a onclick=\"up_directory(); return false;\" href=\"#\"><img style=\"padding-right: 4px;\" alt=\"[up]\" title=\"Up One Level\" src=\"images/previous.png\" /></a><a onclick=\"up_directory(); return false;\" href=\"#\">Up One Level</a></li>";
-    } else {
-        $('updir').innerHTML = "";
-    }
-
+    
     new Ajax.Request("rpc/directory.php?path="+path,
         {
             method:"post",
+            onCreate: function() {
+                var div =  document.createElement('div');
+                var image = document.createElement('img');
+                div.style.height = '100%';
+                image.setAttribute('src', './images/preloader.gif');
+                div.appendChild(image);
+                $('dirnav').innerHTML = "";
+                $('dirnav').appendChild(div);
+            },
             onSuccess: function(xml) {
-                data = xml.responseText.replace(/;amp_r;/g,"&amp;");
+                var data = xml.responseText.replace(/;amp_r;/g,"&amp;");
+                var scroller = document.createElement('div');
+                var directorylist = document.createElement('div');
+                
+                scroller.className = "scroller";
+                directorylist.id = "directorylist";
+                scroller.appendChild(directorylist);
+                
+                $('dirnav').innerHTML = "";
+                $('dirnav').appendChild(scroller);
                 $('directorylist').innerHTML = data;
+
+                if(path != ""){
+                    up = document.createElement('a');
+                    up.style.marginBottom = "0.4em";
+                    up.setAttribute('href', '#');
+                    up.setAttribute('onclick', 'up_directory(); return false;');
+                    up.innerHTML = "Up One Level";
+                    up.style.textDecoration = 'none';
+                    up.style.color = '#662211';
+                    $('dirnav').insertBefore(up, scroller);
+                } else {
+                    if($('updir')){
+                        $('dirnav').removeChild($('updir'));
+                    }
+                }
             }
-        })
+        })                 
 }
 
 function up_directory() {
