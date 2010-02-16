@@ -116,7 +116,7 @@ function songlist() {
                         album = res.playlist[i].album;
                     }
                     if(oldalbum != album){
-                        $('songlist').innerHTML += "<span style=\"font-weight: bold;\">" + cleanup(album) + "</span> by <span style=\"font-weight: bold;\">" + cleanup(artist) + "</span>";
+                        $('songlist').innerHTML += "<div><span style=\"font-weight: bold;\">" + cleanup(album) + "</span> by <span style=\"font-weight: bold;\">" + cleanup(artist) + "</span></div>";
                         oldalbum = album;
                     }
                     if(res.playlist[i].title == undefined){
