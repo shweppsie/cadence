@@ -143,6 +143,13 @@ function toggle_p(prop) {
 }
 
 function update_dir(){
+    var div =  document.createElement('div');
+    var image = document.createElement('img');
+    div.style.height = '100%';
+    image.setAttribute('src', './images/preloader.gif');
+    div.appendChild(image);
+    $('dirnav').innerHTML = "";
+    $('dirnav').appendChild(div);
     path = "";
     
     if(curDirectory.length > 0){
@@ -156,15 +163,6 @@ function update_dir(){
     new Ajax.Request("rpc/directory.php?path="+path,
         {
             method:"post",
-            onCreate: function() {
-                var div =  document.createElement('div');
-                var image = document.createElement('img');
-                div.style.height = '100%';
-                image.setAttribute('src', './images/preloader.gif');
-                div.appendChild(image);
-                $('dirnav').innerHTML = "";
-                $('dirnav').appendChild(div);
-            },
             onSuccess: function(xml) {
                 var data = xml.responseText.replace(/;amp_r;/g,"&amp;");
                 var scroller = document.createElement('div');
