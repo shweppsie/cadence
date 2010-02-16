@@ -35,6 +35,7 @@ div.header {
 }
 div#dirnav {
     height: 22em;
+    margin-top: 1em;
 }
 div#browser {
     margin: 0;
