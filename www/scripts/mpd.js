@@ -125,6 +125,7 @@ function songlist() {
                         $('songlist').innerHTML += "<li><a href='#' onclick='command(\"del\","+(i)+"); return false;'>[x]</a><a id='song_"+i+"' href='#' onclick='command(\"play\","+(i)+"); return false'>" + cleanup(res.playlist[i].title) + "</a></li>";
                     }
                 }
+                refresh();
             }
         });
 }
