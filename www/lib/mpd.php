@@ -162,6 +162,11 @@ class MPD {
     function previous() {
         return $this->send("previous");
     }
+
+    function replace($path) {
+        $cmd = "command_list_begin\nclear\nadd \"$path\"\nplay\ncommand_list_end";
+        return $this->send($cmd);
+    }
     
     function add($path) {
         $retval =$this->send("add \"$path\"");

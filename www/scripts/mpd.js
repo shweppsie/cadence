@@ -223,9 +223,7 @@ function addToPlaylist(path) {
 }
 
 function replaceCurrentPlaylist(path) {
-    command('clear');
-    command('add',path);
-    command('play');
+    command('replace',path);
 }
 
 function play() {
