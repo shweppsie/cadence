@@ -75,12 +75,14 @@ function refresh() {
                 playlistSize = res.playlistlength;
             }
 
-            $('song_'+prevSong).style.fontWeight="";
-            $('song_'+res.pos).style.fontWeight="bold";
-            prevSong = res.pos;
-        },
-onFailure: function() {
-           }
+            if($('song_'+res.pos) && $('song_'+res.pos).style.fontWeight != "bold"){
+                $('song_'+res.pos).style.fontWeight = "bold";
+                if(prevSong != null && $('song_'+prevSong) != null && prevSong != res.pos){
+                    $('song_'+prevSong).style.fontWeight = "";
+                    prevSong = res.pos;
+                }
+            }
+        }
     });
 }
 
