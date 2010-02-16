@@ -5,66 +5,66 @@ body {
     font-family: "Helvetica", "Arial", sans-serif;
 }
 div#player,div#playlist,div#browser,div#artist {
-    border: 1px double #777;
-    background: #ddd url('./default/header.png') repeat-x top;
-    padding: 5px 10px;
+border: 1px double #777;
+background: #ddd url('./default/header.png') repeat-x top;
+padding: 5px 10px;
 }
 div#player {
-    clear: both;
-    width: 22em;
-    margin: 0 auto;
-    margin-bottom: 1em;
-    height: 160px;
+clear: both;
+width: 22em;
+margin: 0 auto;
+        margin-bottom: 1em;
+height: 160px;
 }
 div.meta {
-    width: 64em;
-    margin: 0 auto;
+width: 64em;
+margin: 0 auto;
 }
 div#playlist {
-    float: left;
-    width: 30em;
-    margin: 0 0 0 0;
-    height: 25em;
+float: left;
+width: 30em;
+margin: 0 0 0 0;
+height: 25em;
 }
 div.scroller {
-    overflow: auto;
-    height:92%;
+overflow: auto;
+height:92%;
 }
 div.header {
     margin-bottom: 1em;
 }
 div#dirnav {
-    height: 22em;
-    margin-top: 1em;
+height: 22em;
+        margin-top: 1em;
 }
 div#browser {
-    margin: 0;
-    height: auto;
-    float: right;
-    width: 30em;
-    scroll: auto;
+margin: 0;
+height: 25em;
+float: right;
+width: 30em;
+scroll: auto;
 }
 div.playerbox {
-    width: 100%;
-    border: 1px solid #000;
-    background: #666;
-    margin: 0px auto;
-    text-align: center;
-    height: 136px;
+width: 100%;
+border: 1px solid #000;
+background: #666;
+margin: 0px auto;
+        text-align: center;
+height: 136px;
 }
 h1#host {
-    color: #ddd;
-    font-size: 18px;
-    margin: 2px 2px 0px;
-    padding: 0px;
-    letter-spacing: 4px;
+color: #ddd;
+       font-size: 18px;
+margin: 2px 2px 0px;
+padding: 0px;
+         letter-spacing: 4px;
 }
 #controls {
-    padding: 0px 1em;
+padding: 0px 1em;
 }
 div.options {
     border-top: 1px solid #888;
-    padding: 0px 1em;
+padding: 0px 1em;
 }
 div.control {
     text-align: center;
