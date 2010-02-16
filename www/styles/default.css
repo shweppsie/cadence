@@ -23,7 +23,7 @@ div.meta {
 div#playlist {
     float: left;
     width: 30em;
-    margin 0 0 0 0;
+    margin: 0 0 0 0;
     height: 25em;
 }
 div.scroller {
@@ -59,7 +59,7 @@ h1#host {
     letter-spacing: 4px;
 }
 #controls {
-    padding 0px 1em;
+    padding: 0px 1em;
 }
 div.options {
     border-top: 1px solid #888;
