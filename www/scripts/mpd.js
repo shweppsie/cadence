@@ -85,8 +85,9 @@ onFailure: function() {
 }
 
 function cleanup(text){
-    text = text.replace("\\'","'");
-    text = text.replace("\'","'");
+    text = text.replace(/\\'/g, "'");
+    text = text.replace(/\'/g, "'");
+    text = text.replace(/\\"/g, "\"");
     return text;
 }
 
