@@ -257,3 +257,14 @@ function setVolume(v) {
         lastVolume = v;
     }
 }
+
+function clearplaylist() {
+    prevSong = null;
+    command('clear');
+    for(var i = 0; i < 1000; i++){
+        if(playlistSize > 0){
+            songlist();
+            return;
+        }
+    }
+}
