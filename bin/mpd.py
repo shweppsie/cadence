@@ -1,4 +1,5 @@
 import socket
+import os
 
 class MPD:
     def __init__(self, host, port):
