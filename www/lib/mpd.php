@@ -171,9 +171,7 @@ class MPD {
     }
     
     function add($path) {
-        $retval =$this->send("add \"$path\"");
-//        $this->send("add");
-        return $retval;
+        return $this->send("add \"$path\"");
     }
     
     function save($playlist) {
