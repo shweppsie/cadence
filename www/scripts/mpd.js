@@ -145,6 +145,7 @@ function toggle_p(prop) {
 function update_dir(){
     var div =  document.createElement('div');
     var image = document.createElement('img');
+    div.style.margin = "2em 1em";
     div.style.height = '100%';
     image.setAttribute('src', './images/preloader.gif');
     div.appendChild(image);
